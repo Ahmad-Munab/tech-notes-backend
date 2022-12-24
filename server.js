@@ -1,13 +1,19 @@
 const express = require("express")
-const app = express()
+const cookieParser = require("cookie-parser")
+const cors = require("cors")
 const path = require("path")
-const PORT = process.env.PORT || 3500
 
+const PORT = process.env.PORT || 3500
+const app = express()
+
+app.use(express.json())
+app.use(cors({
+    origin: ['http://localhost:3000'],
+    methods: '*'
+}))
 
 app.use('/', express.static(path.join(__dirname, './public')))
-
 app.use('/', require('./routes/root'))
-
 app.all("*", (req, res) => {
     res.status(404)
     if (req.accepts('html')) {
