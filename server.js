@@ -1,11 +1,27 @@
+// Importinng required files
+require("dotenv").config()
 const express = require("express")
+const mongoose = require("mongoose")
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
 const path = require("path")
 
 const PORT = process.env.PORT || 3500
+const DATABASE_URI = process.env.DATABASE_URI
 const app = express()
 
+// Connecting to MongoDB
+mongoose.set('strictQuery', true)
+const connectDB = async () => {
+    try {
+        await mongoose.connect(DATABASE_URI)
+    } catch (err) {
+        console.log(err)
+    }
+}
+connectDB()
+
+// Midlewares
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
@@ -13,8 +29,11 @@ app.use(cors({
     methods: '*'
 }))
 
+// Defining the routs and static files
 app.use('/', express.static(path.join(__dirname, './public')))
+
 app.use('/', require('./routes/root'))
+
 app.all("*", (req, res) => {
     res.status(404)
     if (req.accepts('html')) {
@@ -26,6 +45,13 @@ app.all("*", (req, res) => {
     }
 })
 
+// Starting server and MongoDB
+mongoose.connection.once("open", () => {
+    console.log("Connected to MongoDB")
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+})
 
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+//Checking for err in MongoDB
+mongoose.connection.on("error", err => {
+    console.log(err)
+})
