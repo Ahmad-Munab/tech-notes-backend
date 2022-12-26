@@ -26,7 +26,7 @@ const createNewUser = asyncHandler(async (req, res) => {
 
     const duplicate = await User.findOne({ username }).lean().exec()
     if (duplicate) {
-        return res.status(400).json()
+        return res.status(400).json({message: `User ${duplicate.username} already exists`})
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -45,7 +45,7 @@ const createNewUser = asyncHandler(async (req, res) => {
 })
 
 const updateUser = asyncHandler(async (req, res) => {
-    const { id, username, roles, active, password } = req.body
+    const { id, username, password, roles, active } = req.body
     if (!id ||!username ||!password ||!roles.length ||!Array.isArray(roles) || typeof(active) !=="boolean") {
         return res.status(400).json({
             message: "Bad request"
@@ -57,7 +57,7 @@ const updateUser = asyncHandler(async (req, res) => {
         return res.status(404).json({ message: "User not found" })
     }
 
-    const duplicate = await User.findOne({ username }).lean().exec()
+    const duplicate = await User.findOne({ username }).exec()
     if (duplicate && duplicate.id!== id) {
         return res.status(409).json({ message: `Duplicate username ${username}` }) 
     }
