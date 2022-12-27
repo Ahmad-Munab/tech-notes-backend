@@ -7,7 +7,7 @@ const Notes = require(path.join(__dirname, '../models/Note'))
 
 
 const getAllUsers = asyncHandler(async (req, res) => {
-    const users = await User.find().select(-"password").lean()
+    const users = await User.find().select("-password").lean()
     if (!users?.length) {
         return res.status(404).json({
             message: "No users found"
@@ -20,7 +20,7 @@ const createNewUser = asyncHandler(async (req, res) => {
     const { username, password, roles } = req.body
     if (!username || !password || !roles || !Array.isArray(roles) || !roles.length) {
         return res.status(400).json({
-            message: "Bad request"
+            message: "Bad request, All fields required"
         })
     }
 
@@ -48,7 +48,7 @@ const updateUser = asyncHandler(async (req, res) => {
     const { id, username, password, roles, active } = req.body
     if (!id ||!username ||!password ||!roles.length ||!Array.isArray(roles) || typeof(active) !=="boolean") {
         return res.status(400).json({
-            message: "Bad request"
+            message: "Bad request, All fields required"
         })
     }
 

@@ -7,7 +7,7 @@ const Notes = require(path.join(__dirname, '../models/Note'))
 
 
 const getAllNotes = asyncHandler(async (req, res) => {
-    const notes = await Notes.find().select().lean()
+    const notes = await Notes.find().lean()
     if (!notes?.length) {
         return res.status(404).json({
             message: "No notes found"
@@ -17,24 +17,27 @@ const getAllNotes = asyncHandler(async (req, res) => {
 })
 
 const createNewNote = asyncHandler(async (req, res) => {
-    const { user, title, text, completed } = req.body
+    const { user, title, text } = req.body
     if (!user ||!title ||!text) {
         return res.status(400).json({
             message: "Invalid request"
         })
+    } else if (!Users.findOne({ _id: user })) {
+        return res.status(404).json({
+            message: "User Id not found"
+        })
     }
 
-    // const duplicate = await Notes.findOne({ title }).lean().exec()
-    // if (duplicate) {
+    const duplicate = await Notes.findOne({ title }).lean().exec()
+    if (duplicate) {
 
-    //     return res.status(400).json({message: `Note with the title : ${duplicate.title} already exists`})
-    // }
+        return res.status(400).json({message: `Note with the title : ${duplicate.title} already exists`})
+    }
 
     const note = new Notes({
             user,
             title,
             text,
-            completed: typeof completed === 'undefined' ? false : completed,
     })
     await note.save()
 
@@ -57,7 +60,7 @@ const updateNote = asyncHandler(async (req, res) => {
         return res.status(404).json({ message: "Couldn't find provided note. not found" })
     }
     const duplicate = await Notes.findOne({ title }).exec()
-    if (duplicate && duplicate.id!== id) {
+    if (duplicate && duplicate.id.toString() !== id) {
         return res.status(409).json({ message: `Duplicate title ${title}` }) 
     }
 

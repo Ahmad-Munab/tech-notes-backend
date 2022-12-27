@@ -9,6 +9,7 @@ router.route('/')
     .get(usersController.getAllUsers)
     .post(usersController.createNewUser)
     .patch(usersController.updateUser)
+    .put(usersController.updateUser)
     .delete(usersController.deleteUser)
 
 
