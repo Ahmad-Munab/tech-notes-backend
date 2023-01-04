@@ -9,7 +9,7 @@ const path = require("path")
 
 const PORT = process.env.PORT || 3500
 const DATABASE_URI = process.env.DATABASE_URI
-const CORST_ACCESS_URLS = process.env.CORST_ACCESS_URLS
+const CORS_ACCESS_URLS = process.env.CORS_ACCESS_URLS
 const app = express()
 
 // Connecting to MongoDB
@@ -27,7 +27,7 @@ connectDB()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: [...CORST_ACCESS_URLS],
+    origin: [...CORS_ACCESS_URLS],
     methods: '*'
 }))
 
