@@ -27,7 +27,7 @@ connectDB()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: [...CORS_ACCESS_URLS],
+    origin: '*',
     methods: '*'
 }))
 
