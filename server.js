@@ -26,10 +26,7 @@ connectDB()
 // Midlewares
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors({
-    origin: '*',
-    methods: '*'
-}))
+app.use(cors())
 
 // Defining the routs and static files
 app.use('/', express.static(path.join(__dirname, './public')))
