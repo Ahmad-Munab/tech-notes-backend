@@ -9,7 +9,7 @@ const path = require("path")
 
 const PORT = process.env.PORT || 3500
 const DATABASE_URI = process.env.DATABASE_URI
-const CORS_ACCESS_URLS = process.env.CORS_ACCESS_URLS
+const CORS_ACCESS_URLS = process.env.CORS_ACCESS_URLS || null
 const app = express()
 
 // Connecting to MongoDB
@@ -27,8 +27,8 @@ connectDB()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: [...CORS_ACCESS_URLS],
-    methods: '*'
+    origin: '*',
+    methods: ["GET","POST","PUT","PATCH","DELETE"]
 }))
 
 // Defining the routs and static files

@@ -17,8 +17,9 @@ const getAllUsers = asyncHandler(async (req, res) => {
 })
 
 const createNewUser = asyncHandler(async (req, res) => {
-    const { username, password, roles } = req.body
-    if (!username || !password || !roles || !Array.isArray(roles) || !roles.length) {
+    const { username, password, role, active } = req.body
+    if (!username || !password || !role || typeof active !== 'undefined' & typeof active !== 'boolean') {
+
         return res.status(400).json({
             message: "Bad request, All fields required"
         })
@@ -30,10 +31,12 @@ const createNewUser = asyncHandler(async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
+    active = typeof active === 'boolean'? active : true
     const user = new User({
             username,
             password: hashedPassword,
-            roles
+            role,
+            active
     })
     await user.save()
 
@@ -45,8 +48,8 @@ const createNewUser = asyncHandler(async (req, res) => {
 })
 
 const updateUser = asyncHandler(async (req, res) => {
-    const { id, username, password, roles, active } = req.body
-    if (!id ||!username ||!password ||!roles.length ||!Array.isArray(roles) || typeof(active) !=="boolean") {
+    const { id, username, password, role, active } = req.body
+    if (!id ||!username ||!password ||!role || typeof(active) !== "boolean") {
         return res.status(400).json({
             message: "Bad request, All fields required"
         })
@@ -63,12 +66,9 @@ const updateUser = asyncHandler(async (req, res) => {
     }
 
     user.username = username
-    user.roles = roles
+    user.password = await bcrypt.hash(password, 10)
+    user.role = role
     user.active = active
-    
-    if (password) {
-        user.password = await bcrypt.hash(password, 10)
-    }
 
     const updatedUser = await user.save()
 
